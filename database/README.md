@@ -17,9 +17,9 @@ Client UI should be designed to capture these fields
 User data should be stored in database too
 ```
 {
-    "user-id": 1
-    "email": "user@mail.com"
-    "token": 2341
+    "user-id": 1,
+    "email": "user@mail.com",
+    "token": 2341,
     "status": "unverified"
 }
 ```
