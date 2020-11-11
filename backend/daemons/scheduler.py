@@ -22,8 +22,8 @@ class Scheduler:
                      "email": "%s"%(emails[j]),
                      "status":"todo"
                 }
-            self.events.insert_one(doc)
-            print("[INFO]: an event generated")
+                self.events.insert_one(doc)
+                print("[INFO]: an event generated")
             sleep(300)
     
     def scheduleEvents(self):
