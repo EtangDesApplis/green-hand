@@ -1,1 +1,3 @@
-# green-hand
+# daemons
+
+docker build -t etangdesapplis/gh-daemons .

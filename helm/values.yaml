@@ -1,0 +1,23 @@
+pullPolicy: Always
+login: "greenhands.noreply@gmail.com"
+password: "password"
+dbService: "mongodb"
+
+daemons:
+  image: etangdesapplis/gh-daemons
+  tag: latest
+  replicaCount: 1
+
+api:
+  image: etangdesapplis/gh-api
+  tag: latest
+  nodePort: 32100
+  replicaCount: 1
+
+database:
+  image: mongo
+  tag: 4.4.1
+  persistent:
+    enabled: false #when activated, data is stored on host location
+    hostPath: /home/ubuntu/databases/greenhands
+    

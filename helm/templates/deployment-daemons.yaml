@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daemons
+spec:
+  selector:
+    matchLabels:
+      app: daemons
+  replicas: {{ .Values.daemons.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: daemons
+    spec:
+      containers:
+      - name: daemons
+        image: "{{ .Values.daemons.image }}:{{ .Values.daemons.tag }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        envFrom:
+          - secretRef:
+              name: gh-secrets
