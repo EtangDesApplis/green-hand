@@ -23,3 +23,14 @@ User data should be stored in database too
     "status": "unverified"
 }
 ```
+## Basic mongodb commands
+
+For full reference: https://docs.mongodb.com/manual/crud/
+
+```
+show dbs;
+use green-hand;
+show collections;
+db.users.find()
+db.users.updateOne({"name":"Quan"},{$set: {"status":"verified"}})
+```
