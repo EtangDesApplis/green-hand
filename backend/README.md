@@ -1,3 +1,3 @@
 # daemons
 
-docker build -t etangdesapplis/gh-daemons .
+docker build -t etangdesapplis/gh-daemons daemons/

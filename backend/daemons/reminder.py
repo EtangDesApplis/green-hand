@@ -1,3 +1,11 @@
+"""
+Project: Green Hands
+Authors: nguyen.ensma@gmail.com
+All rights reserved
+
+Objectif: this daemon looks for events and sends respective notification to user when the time comes 
+"""
+
 import smtplib
 from pymongo import MongoClient
 from datetime import datetime
@@ -6,8 +14,8 @@ from time import sleep
 
 class Reminder:
     def __init__(self):
-        self.login=os.getenv("LOGIN")#"greenhands.noreply@gmail.com"
-        self.password=os.getenv("PASSWORD")#"9reenHand$"
+        self.login=os.getenv("LOGIN")
+        self.password=os.getenv("PASSWORD")
         self.collection=MongoClient(os.getenv("DB_SERVICE"))['green-hand']['events']
         #self.collection=MongoClient("myk3s.com",32017)['green-hand']['events']
     

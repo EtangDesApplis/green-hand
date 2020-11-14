@@ -56,3 +56,7 @@ if __name__=="__main__":
     printUsers(db)
     #print seed database
     printSeeds(db)
+    #test find_one
+    ans=db["users"].find_one({"name":"noname"})
+    print(ans)
+    print(type(ans))
