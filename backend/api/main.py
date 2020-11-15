@@ -26,8 +26,13 @@ def verify(tokenInfo):
                 {"id": id},
                 {"$set": {"status":"verified"}}
             )
+      return {"Status":"OK"}
+    else :
+      return {"Status":"KO"}
   except:
     print("Warning, unidentify requests")
+    return {"Status":"KO"}
+
 
 
 @app.route('/', methods=['POST'])
