@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 from flask import send_from_directory
 from pymongo import MongoClient
+import pprint
 
 
 users = MongoClient(os.getenv("DB_SERVICE"))['green-hand']['users']
@@ -17,10 +18,12 @@ CORS(app)
 def verify(tokenInfo):
   #ID prendre la premiere valeur avant le trait
   id = tokenInfo.split('-')[0]
+  print('id',id)
   countertoken = tokenInfo.split('-')[1]
   print('countertoken', countertoken)
   #IDuser
   user=users.find_one({"id":id})
+  pprint.pprint(user)
   print(user["counter-token"])
   try:
     if countertoken == user["counter-token"]:

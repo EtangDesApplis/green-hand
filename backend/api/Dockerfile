@@ -4,4 +4,4 @@ RUN pip install flask flask_cors
 RUN pip install pymongo
 COPY main.py /home/worker/main.py
 EXPOSE 5000
-CMD ["python", "main.py"]
+CMD ["python", "-u", "main.py"]
