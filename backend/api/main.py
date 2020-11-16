@@ -18,8 +18,10 @@ def verify(tokenInfo):
   #ID prendre la premiere valeur avant le trait
   id = tokenInfo.split('-')[0]
   countertoken = tokenInfo.split('-')[1]
+  print('countertoken', countertoken)
   #IDuser
   user=users.find_one({"id":id})
+  print(user["counter-token"])
   try:
     if countertoken == user["counter-token"]:
       users.update_one(
