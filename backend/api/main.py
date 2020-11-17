@@ -4,15 +4,14 @@ import os
 from flask import send_from_directory
 from pymongo import MongoClient
 import pprint
-
-
-users = MongoClient(os.getenv("DB_SERVICE"))['green-hand']['users']
-seeds = MongoClient(os.getenv("DB_SERVICE"))['green-hand']['seeds']
-
+from flask_pymongo import PyMongo
 
 app = Flask(__name__)
+app.config["MONGO_URI"] = "mongodb://%s/green-hand"%(os.getenv("DB_SERVICE"))
 CORS(app)
 #/gh-api/{userID}-{countertoken} GET request to verify user
+mongo = PyMongo(app)
+
 
 @app.route('/<path:tokenInfo>')
 def verify(tokenInfo):
@@ -22,12 +21,12 @@ def verify(tokenInfo):
   countertoken = tokenInfo.split('-')[1]
   print('countertoken', countertoken)
   #IDuser
-  user=users.find_one({"id":id})
+  user=mongo.db.users.find_one({"id":id})
   pprint.pprint(user)
   print(user["counter-token"])
   try:
     if countertoken == user["counter-token"]:
-      users.update_one(
+      mongo.db.users.update_one(
                 {"id": id},
                 {"$set": {"status":"verified"}}
             )
