@@ -16,7 +16,7 @@ mongo = PyMongo(app)
 @app.route('/<path:tokenInfo>')
 def verify(tokenInfo):
   #ID prendre la premiere valeur avant le trait
-  id = tokenInfo.split('-')[0]
+  id = int(tokenInfo.split('-')[0])
   print('id',id)
   countertoken = tokenInfo.split('-')[1]
   print('countertoken', countertoken)
