@@ -1,5 +1,9 @@
 # green-hand
 
+## Database architecture
+
+![Architecture of Database](../resources/green-hands-DB.png)
+
 ## Template of JSON to push to Database
 Client UI should be designed to capture these fields
 ```

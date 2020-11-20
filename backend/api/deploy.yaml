@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gh-api-deployment
+  labels:
+    app: gh-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gh-api
+  template:
+    metadata:
+      labels:
+        app: gh-api
+    spec:
+      containers:
+      - name: gh-api
+        image: etangdesapplis/gh-api:test
+        ports:
+        - containerPort: 5000
