@@ -7,11 +7,26 @@ Objectif: this daemon verifies identity of user to avoid spam email by saboters
 """
 
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from jinja2 import Environment, FileSystemLoader
 from pymongo import MongoClient
 from datetime import datetime
 import os
 from time import sleep, time
 from secrets import token_hex
+
+def getTimeStamp():
+  return datetime.now().strftime("[%Y-%m-%d][%H:%M:%S]")
+
+def printERROR(data):
+  print(getTimeStamp()+"[ERROR] "+data)
+
+def printINFO(data):
+  print(getTimeStamp()+"[INFO] "+data)
+
+def printWARN(data):
+  print(getTimeStamp()+"[WARN] "+data)
 
 class Auditor:
     def __init__(self):
@@ -19,6 +34,7 @@ class Auditor:
         self.password=os.getenv("PASSWORD")
         self.users=MongoClient(os.getenv("DB_SERVICE"))['green-hand']['users']
         self.seeds=MongoClient(os.getenv("DB_SERVICE"))['green-hand']['seeds']
+        self.env=Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__),"templates")),trim_blocks=True)
     
     def test(self):
         #inject fake user & fake seed
@@ -30,7 +46,6 @@ class Auditor:
                 "id": i,
                 "email":emails[i],
                 "status":"unverified",
-                "scheduled":[],
                 "seeds":[i],
                 "token": token_hex(6),
                 "counter-token": token_hex(12),
@@ -41,33 +56,42 @@ class Auditor:
             print("[INFO]: added new user")
             seed={
                 "id": i,
-                "ext":[1,2,3,4,5,6,7,8,9,10,11,12],
-                "name": "seed%d"%(i)
+                "seedingOutdoor":[4,5,6,7,8,9,10],
+                "seedingIndoor":[1,2,3,11,12],
+                "variety": "seed%d"%(i)
             }
             self.seeds.insert_one(seed)
             print("[INFO]: added new seed")
 
-    def requestVerification(self):
-        #need to optimize number of login /close
-        try:
-            server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-            server.ehlo()
-            server.login(self.login,self.password)
-            #query for unverified users
-            for user in self.users.find({"status":"unverified"}):
-                #send email with tokens and verification url
-                url="https://chefphan.com/gh-api/%s-%s"%(user["id"],user["counter-token"])
-                data="From: %s\nTo: %s\nSubject: %s\nHi %s,\nWelcome to Green Hands community !\nPlease keep safely your Auth token: %s\n Please click on this URL to verify your email:\n %s"%(self.login,user["email"],"Email verification",user["name"],user["token"],url)
-                server.sendmail(self.login,user["email"],data)
-                #update status to pending
-                self.users.update_one(
-                                {"id": user["id"]},
-                                {"$set": {"status":"pending", "timeStamp":time()}}
-                            )
-                print("[INFO]: sent verification email to a new user")
-            server.close()
-        except:
-            print("[ERROR]: issue with email server")
+    def requestVerification(self):  
+        #query for unverified users
+        unverifiedUsers=self.users.find({"status":"unverified"})
+        if len(unverifiedUsers)>0:
+            try:
+                server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+                server.ehlo()
+                server.login(self.login,self.password)
+                for user in unverifiedUsers:
+                    #send email with tokens and verification url
+                    url="https://chefphan.com/gh-api/%d-%s"%(user["id"],user["counter-token"])
+
+                    msg=MIMEMultipart('alternative')
+                    msg['Subject']="Email verification"
+                    msg['From']=self.login
+                    msg['To']=user["email"]
+                    data=MIMEText(self.env.get_template('emailVerification.html').render(user="Quan",token=user["token"], link=url),'html')
+                    msg.attach(data)
+                    server.sendmail(self.login,user["email"],msg.as_string())
+
+                    #update status to pending
+                    self.users.update_one(
+                                    {"id": user["id"]},
+                                    {"$set": {"status":"pending", "timeStamp":time()}}
+                                )
+                    printINFO("sent verification email to user with id = %d"%(user["id"]))
+                server.close()
+            except:
+                printERROR("issue with email server")
 
     def cleanUp(self):
         #query for pending users
@@ -78,10 +102,10 @@ class Auditor:
                 #delete all linked seeds
                 for id in user["seeds"]:
                     self.seeds.delete_one({"id": id})
-                    print("[INFO]: deleted a seed from timeouted unverified user")
+                    printWARN("deleted a seed from timeouted unverified user, seed id = %d"%(id))
                 #delete user
                 self.users.delete_one({"id": user["id"]})
-                print("[INFO]: deleted a timeouted unverified user")
+                printWARN("deleted a timeouted unverified user, id = %d"%(user["id"]))
 
     def run(self):
         while True:

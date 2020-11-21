@@ -7,17 +7,33 @@ Objectif: this daemon looks for events and sends respective notification to user
 """
 
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from jinja2 import Environment, FileSystemLoader
 from pymongo import MongoClient
 from datetime import datetime
 import os
 from time import sleep
 
+def getTimeStamp():
+  return datetime.now().strftime("[%Y-%m-%d][%H:%M:%S]")
+
+def printERROR(data):
+  print(getTimeStamp()+"[ERROR] "+data)
+
+def printINFO(data):
+  print(getTimeStamp()+"[INFO] "+data)
+
+def printWARN(data):
+  print(getTimeStamp()+"[WARN] "+data)
+
 class Reminder:
     def __init__(self):
         self.login=os.getenv("LOGIN")
         self.password=os.getenv("PASSWORD")
-        self.collection=MongoClient(os.getenv("DB_SERVICE"))['green-hand']['events']
-        #self.collection=MongoClient("myk3s.com",32017)['green-hand']['events']
+        self.events=MongoClient(os.getenv("DB_SERVICE"))['green-hand']['events']
+        #self.events=MongoClient("myk3s.com",32017)['green-hand']['events']
+        self.env=Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__),"templates")),trim_blocks=True)
     
     def test(self,email,subject,content):
         try:
@@ -31,33 +47,56 @@ class Reminder:
         except:
             print("Something went wrong...")
 
-    def queryEvents(self):
-        #get time stamp in format of YYYYMM
-        currentTimeStamp=datetime.now().strftime("%Y%m")
+    def test2(self,email,subject,content):
         try:
             server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
             server.ehlo()
             server.login(self.login,self.password)
-            # events in form of JSON: {"label": "user-seed-YYYYMM", "email": "user@mail.com", "status": "todo"}
-            events=self.collection.find()
-            for event in events:
-                try:
-                    if event["status"]=="todo":
-                        tmp=event["label"].split('-')
-                        if tmp[2]==currentTimeStamp:
-                            data="From: %s\nTo: %s\nSubject: %s\nJust a kind reminder to plant your %s"%(self.login,event["email"],"Reminder from green hands",tmp[1])
-                            server.sendmail(self.login,event["email"],data)
-                            print("[INFO]: sending notifications")
-                            #mark as done
-                            self.collection.update_one(
-                                {"label": event["label"]},
-                                {"$set": {"status":"done"}}
-                            )
-                except:
-                    print("[WARNING]: Event DB is not consistent")
+
+            msg=MIMEMultipart('alternative')
+            msg['Subject']=subject
+            msg['From']=self.login
+            msg['To']=email
+            data=MIMEText(self.env.get_template('indoorSeedling.html').render(user="Quan",seed="rose"),'html')
+            msg.attach(data)
+
+            server.sendmail(self.login,email,msg.as_string())
             server.close()
         except:
-            print("[ERROR]: issue with email server")
+            print("Something went wrong...")
+
+    def queryEvents(self):
+        #get time stamp in format of YYYYMM
+        currentTimeStamp=datetime.now().strftime("%Y%m")
+        # events in form of JSON: {"label": "user-seed-YYYYMM-uid-type", "email": "user@mail.com", "status": "todo", "timeStamp":"YYYYMM"}
+        events=self.events.find({"status":"todo","timeStamp":currentTimeStamp})
+        if len(events)>0:
+            try:
+                server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+                server.ehlo()
+                server.login(self.login,self.password)
+                for event in events:
+                    if event["status"]=="todo":
+                        tmp=event["label"].split('-')
+                        msg=MIMEMultipart('alternative')
+                        msg['Subject']="Reminder from green hands"
+                        msg['From']=self.login
+                        msg['To']=event["email"]
+                        if tmp[4]=="int":
+                            data=MIMEText(self.env.get_template('indoorSeedling.html').render(user=tmp[0],seed=tmp[1]),'html')
+                        else:
+                            data=MIMEText(self.env.get_template('outdoorSeedling.html').render(user=tmp[0],seed=tmp[1]),'html')
+                        msg.attach(data)
+                        server.sendmail(self.login,event["email"],msg.as_string())
+                        printINFO("sending notifications to user with id = %s"%(tmp[3]))
+                        #mark as done
+                        self.events.update_one(
+                            {"label": event["label"]},
+                            {"$set": {"status":"done"}}
+                        )
+                server.close()
+            except:
+                printERROR("issue with email server")
 
     def run(self):
         while True:
@@ -68,4 +107,5 @@ class Reminder:
 if __name__=="__main__":
     daemon=Reminder()
     #daemon.test("nguyen.ensma@gmail.com","test email", "Hello thee")
+    #daemon.test2("nguyen.ensma@gmail.com","test email", "Hello thee")
     daemon.run()

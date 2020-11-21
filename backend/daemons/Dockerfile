@@ -7,6 +7,7 @@ WORKDIR /app
 COPY reminder.py /app/reminder.py
 COPY scheduler.py /app/scheduler.py
 COPY auditor.py /app/auditor.py
+COPY templates /app/templates
 
 RUN echo "python -u /app/scheduler.py &" > start.sh && \
     echo "python -u /app/auditor.py &" >> start.sh && \

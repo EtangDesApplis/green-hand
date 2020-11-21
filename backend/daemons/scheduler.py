@@ -1,8 +1,3 @@
-import smtplib
-from pymongo import MongoClient
-from datetime import datetime
-import os
-from time import sleep
 """
 Project: Green Hands
 Authors: nguyen.ensma@gmail.com
@@ -10,6 +5,24 @@ All rights reserved
 
 Objectif: this daemon scan database of users and seeds and plan the notification in form of events and stored in database.
 """
+
+import smtplib
+from pymongo import MongoClient
+from datetime import datetime
+import os
+from time import sleep
+
+def getTimeStamp():
+  return datetime.now().strftime("[%Y-%m-%d][%H:%M:%S]")
+
+def printERROR(data):
+  print(getTimeStamp()+"[ERROR] "+data)
+
+def printINFO(data):
+  print(getTimeStamp()+"[INFO] "+data)
+
+def printWARN(data):
+  print(getTimeStamp()+"[WARN] "+data)
 
 class Scheduler:
     def __init__(self):
@@ -30,7 +43,7 @@ class Scheduler:
                      "status":"todo"
                 }
                 self.events.insert_one(doc)
-                print("[INFO]: an event generated")
+                printINFO("an event generated")
             sleep(300)
     
     def scheduleEvents(self):
@@ -40,13 +53,26 @@ class Scheduler:
         for user in self.users.find({"status":"verified"}):
             for sid in user["seeds"]:
                 seed=self.seeds.find_one({"id": sid})
-                #event for outdoor activity
-                for month in seed["ext"]:
+                # outdoor activity
+                for month in seed["seedingOutdoor"]:
                     timeStamp=int(datetime.now().strftime("%Y"))*100+int(month)
                     event={
-                        "label":"%s-%s-%d-%d"%(user["name"],seed["name"],timeStamp,user["id"]),
+                        "label":"%s-%s-%d-%d-ext"%(user["name"],seed["variety"],timeStamp,user["id"]),
                         "email": user["email"],
-                        "status": "todo"
+                        "status": "todo",
+                        "timeStamp": "%d"%(timeStamp)
+                    }
+                    #create an event if not yet
+                    if self.events.find_one({"label":event["label"]})==None:
+                        self.events.insert_one(event)
+                # indoor activity
+                for month in seed["seedingIndoor"]:
+                    timeStamp=int(datetime.now().strftime("%Y"))*100+int(month)
+                    event={
+                        "label":"%s-%s-%d-%d-int"%(user["name"],seed["variety"],timeStamp,user["id"]),
+                        "email": user["email"],
+                        "status": "todo",
+                        "timeStamp": "%d"%(timeStamp)
                     }
                     #create an event if not yet
                     if self.events.find_one({"label":event["label"]})==None:
@@ -56,7 +82,7 @@ class Scheduler:
                                 {"id": user["id"]},
                                 {"$set": {"status":"planified"}}
                             )
-            print("[INFO]: planified all events for user with id=%d"%(user["id"]))
+            printINFO("planified all events for user with id=%d"%(user["id"]))
 
     def run(self):
         while True:
