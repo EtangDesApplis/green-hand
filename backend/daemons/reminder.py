@@ -70,7 +70,7 @@ class Reminder:
         currentTimeStamp=datetime.now().strftime("%Y%m")
         # events in form of JSON: {"label": "user-seed-YYYYMM-uid-type", "email": "user@mail.com", "status": "todo", "timeStamp":"YYYYMM"}
         events=self.events.find({"status":"todo","timeStamp":currentTimeStamp})
-        if len(events)>0:
+        if events != None:
             try:
                 server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
                 server.ehlo()

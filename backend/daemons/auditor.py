@@ -66,7 +66,7 @@ class Auditor:
     def requestVerification(self):  
         #query for unverified users
         unverifiedUsers=self.users.find({"status":"unverified"})
-        if len(unverifiedUsers)>0:
+        if unverifiedUsers != None:
             try:
                 server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
                 server.ehlo()
