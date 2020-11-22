@@ -5,6 +5,8 @@ from flask import send_from_directory
 from pymongo import MongoClient
 import pprint
 from flask_pymongo import PyMongo
+from secrets import token_hex
+
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://%s/green-hand"%(os.getenv("DB_SERVICE"))
@@ -90,6 +92,6 @@ def post_route():
 
 if __name__=="__main__":
   #https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca
-  #curl https://chefphan.com/gh-api/ -d '{"email":"nguyen.ensma@gmail.com","username":"Quan","info":"","seeds":[{"variety":"rose","seedingOutdoor":["3"],"seedingIndoor":["4"],"harvest":["6"],"exposition":"","timeToHarvest":"50"}]}' -H 'Content-Type: application/json'
+  #curl https://chefphan.com/gh-api/ -d '{"email":"nguyen.ensma1@gmail.com","username":"Quan","info":"","seeds":[{"variety":"rose","seedingOutdoor":["3"],"seedingIndoor":["4"],"harvest":["6"],"exposition":"","timeToHarvest":"50"}]}' -H 'Content-Type: application/json'
 
   app.run(host='0.0.0.0')
