@@ -45,13 +45,21 @@ def post_route():
     #print(request.method)
     try:
       data = request.get_json()
+      print("***********")
       print(data)
+      print("***********")
 
       return {"Status":"OK"}
     except:
       return {"Status":"KO"}
 
 if __name__=="__main__":
+  #https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca
+  #curl https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca
+  #curl https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca/json
+  #curl https://etangdesapplis.github.io/green-hand/
+  #curl https://chefphan.com/gh-api/ -d "{"email":"nguyen.ensma@gmail.com","info":"","seeds":[{"variety":"rose","seedingOutdoor":["1"],"seedingIndoor":["1","3","6","9"],"harvest":["2"],"exposition":"","timeToHarvest":""}]}" -H 'Content-Type: application/json'
+  #curl https://chefphan.com/gh-api/ -d "{\"foo\": \"ok\"}" -H 'Content-Type: application/json'
   #to test with curl: curl localhost:5000 -d "{\"foo\": \"ok\"}" -H 'Content-Type: application/json'
   #curl localhost:5000/Mandat.pdf
 
