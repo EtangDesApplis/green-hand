@@ -41,26 +41,55 @@ def verify(tokenInfo):
 
 @app.route('/', methods=['POST'])
 def post_route():
+  try:
+    #step 1 validate email
+    # separer le json en deux parties
+    #rajouter l'id dans le json pour le test
+    # questionner la base de donné pour l'id
+    # questionner la base de donné pour l'email
 
-    #print(request.method)
-    try:
-      data = request.get_json()
-      print("***********")
-      print(data)
-      print("***********")
+    data = request.get_json()
 
+    #print("***********")
+    print(data)
+    #print("***********")
+
+    # check if user is registered
+    if mongo.db.users.find_one({"email":data["email"]})==None:
+      # unknown user
+      # get max id
+      status=mongo.db.status.find_one()
+      if status==None:
+        # first run ever
+        uid=0
+        #create status
+        mongo.db.status.insert_one({"uMID":0,"uNb":1})
+      else:
+        uid=status["uMID"]+1
+        #update status
+        mongo.db.status.update_one({},{"$set":{"uMID":status["uMID"]+1,"uNb":status["uNb"]+1}})
+
+      # add seed info here
+      user={
+            "name": data["name"],
+            "id": uid,
+            "email":data["email"],
+            "status":"unverified",
+            "seeds":[],
+            "token": token_hex(6),
+            "counter-token": token_hex(12),
+            "timeStamp": time()
+            }
+      mongo.db.users.insert_one(user)
       return {"Status":"OK"}
-    except:
-      return {"Status":"KO"}
+    else:
+      # reject for the moment due to lack of auth
+      return {"Status":"email already used"}
+  except:
+    return {"Status":"KO"}
 
 if __name__=="__main__":
   #https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca
-  #curl https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca
-  #curl https://chefphan.com/gh-api/1-baa5a663ee0c22f57b3734ca/json
-  #curl https://etangdesapplis.github.io/green-hand/
-  #curl https://chefphan.com/gh-api/ -d "{"email":"nguyen.ensma@gmail.com","info":"","seeds":[{"variety":"rose","seedingOutdoor":["1"],"seedingIndoor":["1","3","6","9"],"harvest":["2"],"exposition":"","timeToHarvest":""}]}" -H 'Content-Type: application/json'
-  #curl https://chefphan.com/gh-api/ -d "{\"foo\": \"ok\"}" -H 'Content-Type: application/json'
-  #to test with curl: curl localhost:5000 -d "{\"foo\": \"ok\"}" -H 'Content-Type: application/json'
-  #curl localhost:5000/Mandat.pdf
+  #curl https://chefphan.com/gh-api/ -d '{"email":"nguyen.ensma@gmail.com","username":"Quan","info":"","seeds":[{"variety":"rose","seedingOutdoor":["3"],"seedingIndoor":["4"],"harvest":["6"],"exposition":"","timeToHarvest":"50"}]}' -H 'Content-Type: application/json'
 
   app.run(host='0.0.0.0')
