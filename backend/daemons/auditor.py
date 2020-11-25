@@ -79,7 +79,7 @@ class Auditor:
                     msg['Subject']="Email verification"
                     msg['From']=self.login
                     msg['To']=user["email"]
-                    data=MIMEText(self.env.get_template('emailVerification.html').render(user="Quan",token=user["token"], link=url),'html')
+                    data=MIMEText(self.env.get_template('emailVerification.html').render(user=user["name"],token=user["token"], link=url),'html')
                     msg.attach(data)
                     server.sendmail(self.login,user["email"],msg.as_string())
 
@@ -115,7 +115,7 @@ class Auditor:
 
 if __name__=="__main__":
     daemon=Auditor()
-    daemon.test() #dev only
+    #daemon.test() #dev only
     daemon.run()
         
 

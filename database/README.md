@@ -38,3 +38,11 @@ show collections;
 db.users.find()
 db.users.updateOne({"name":"Quan"},{$set: {"status":"verified"}})
 ```
+
+## Test API
+
+```
+curl https://chefphan.com/gh-api/ -d \
+'{"email":"nguyen.ensma@gmail.com","username":"Quan","info":"","seeds":[{"variety":"rose","seedingOutdoor":["3"],"seedingIndoor":["4"],"harvest":["6"],"exposition":"","timeToHarvest":"50"}]}' \
+-H 'Content-Type: application/json'
+```

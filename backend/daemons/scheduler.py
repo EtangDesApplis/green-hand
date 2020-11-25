@@ -82,7 +82,7 @@ class Scheduler:
                                 {"id": user["id"]},
                                 {"$set": {"status":"planified"}}
                             )
-            printINFO("planified all events for user with id=%d"%(user["id"]))
+            printINFO("planified all events for user with id = %d"%(user["id"]))
 
     def run(self):
         while True:
