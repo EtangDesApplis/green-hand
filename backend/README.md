@@ -8,7 +8,7 @@ docker build -t etangdesapplis/gh-daemons daemons/
 
 To build image:
 ```
-docker build -t etangdesapplis/gh-daemons api/
+docker build -t etangdesapplis/gh-api api/
 ```
 To test:
 ```

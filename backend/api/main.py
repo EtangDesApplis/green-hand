@@ -101,7 +101,7 @@ def post_route():
             "id": uid,
             "email":data["email"],
             "status":"unverified",
-            "info": data["info"]
+            "info": data["info"],
             "seeds":seedList,
             "token": token_hex(4),
             "counter-token": token_hex(12),
