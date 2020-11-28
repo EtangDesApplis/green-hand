@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  replicas: {{ .Values.api.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: "{{ .Values.api.image }}:{{ .Values.api.tag }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        envFrom:
+          - secretRef:
+              name: gh-secrets

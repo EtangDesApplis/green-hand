@@ -10,7 +10,7 @@ daemons:
 
 api:
   image: etangdesapplis/gh-api
-  tag: latest
+  tag: "1.0.0"
   nodePort: 32100
   replicaCount: 1
 
