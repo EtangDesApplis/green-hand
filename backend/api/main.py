@@ -58,7 +58,7 @@ def verify(tokenInfo):
 
 @app.route('/', methods=['POST'])
 def post_route():
-  try:
+  #try:
 
     # check if user is registered
     if mongo.db.users.find_one({"email":data["email"]})==None:
@@ -117,9 +117,9 @@ def post_route():
       # reject for the moment due to lack of auth
       printWARN("registried user failed to update with email = %s"%(data["email"]))
       return {"Status":"email already used"}
-  except:
-    printERROR("bad request")
-    return {"Status":"KO"}
+  #except:
+    #printERROR("bad request")
+    #return {"Status":"KO"}
 
 if __name__=="__main__":
   
