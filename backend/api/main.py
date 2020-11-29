@@ -92,7 +92,7 @@ def post_route():
                 "exposition": item["exposition"],
                 "timeToHarvest": item["timeToHarvest"]
             }
-        mongo.db.users.insert_one(seed)
+        mongo.db.seeds.insert_one(seed)
         seedList.append(sid)
         sid=sid+1
 
