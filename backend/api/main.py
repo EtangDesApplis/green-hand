@@ -58,8 +58,9 @@ def verify(tokenInfo):
 
 @app.route('/', methods=['POST'])
 def post_route():
+  
   #try:
-
+    data = request.get_json()
     # check if user is registered
     if mongo.db.users.find_one({"email":data["email"]})==None:
       # unknown user
