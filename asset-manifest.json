@@ -1,23 +1,20 @@
 {
   "files": {
-    "main.css": "/green-hand/static/css/main.752b51ec.chunk.css",
-    "main.js": "/green-hand/static/js/main.5005c8e0.chunk.js",
-    "main.js.map": "/green-hand/static/js/main.5005c8e0.chunk.js.map",
+    "main.css": "/green-hand/static/css/main.cc8478e1.chunk.css",
+    "main.js": "/green-hand/static/js/main.fcb4bf5f.chunk.js",
+    "main.js.map": "/green-hand/static/js/main.fcb4bf5f.chunk.js.map",
     "runtime-main.js": "/green-hand/static/js/runtime-main.b10e0407.js",
     "runtime-main.js.map": "/green-hand/static/js/runtime-main.b10e0407.js.map",
-    "static/css/2.23154d62.chunk.css": "/green-hand/static/css/2.23154d62.chunk.css",
-    "static/js/2.b4d9e5ae.chunk.js": "/green-hand/static/js/2.b4d9e5ae.chunk.js",
-    "static/js/2.b4d9e5ae.chunk.js.map": "/green-hand/static/js/2.b4d9e5ae.chunk.js.map",
+    "static/js/2.f3e68333.chunk.js": "/green-hand/static/js/2.f3e68333.chunk.js",
+    "static/js/2.f3e68333.chunk.js.map": "/green-hand/static/js/2.f3e68333.chunk.js.map",
     "index.html": "/green-hand/index.html",
-    "static/css/2.23154d62.chunk.css.map": "/green-hand/static/css/2.23154d62.chunk.css.map",
-    "static/css/main.752b51ec.chunk.css.map": "/green-hand/static/css/main.752b51ec.chunk.css.map",
-    "static/js/2.b4d9e5ae.chunk.js.LICENSE.txt": "/green-hand/static/js/2.b4d9e5ae.chunk.js.LICENSE.txt"
+    "static/css/main.cc8478e1.chunk.css.map": "/green-hand/static/css/main.cc8478e1.chunk.css.map",
+    "static/js/2.f3e68333.chunk.js.LICENSE.txt": "/green-hand/static/js/2.f3e68333.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.b10e0407.js",
-    "static/css/2.23154d62.chunk.css",
-    "static/js/2.b4d9e5ae.chunk.js",
-    "static/css/main.752b51ec.chunk.css",
-    "static/js/main.5005c8e0.chunk.js"
+    "static/js/2.f3e68333.chunk.js",
+    "static/css/main.cc8478e1.chunk.css",
+    "static/js/main.fcb4bf5f.chunk.js"
   ]
 }
