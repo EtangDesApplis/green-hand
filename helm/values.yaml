@@ -19,5 +19,4 @@ database:
   tag: 4.4.1
   persistent:
     enabled: false #when activated, data is stored on host location
-    hostPath: /home/ubuntu/databases/greenhands
-    
+    hostPath: /home/ubuntu/Databases/greenhands

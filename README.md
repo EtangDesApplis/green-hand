@@ -2,8 +2,12 @@
 
 Application helps amateurs to take care of his/her garden easily in terms of planification
 
+```
+https://etangdesapplis.github.io/green-hand/
+```
+
 ## Front-web 
-This UI will be used mainly for POC & beta version and Admin console
+This UI will be used mainly for POC & beta version and Admin console deployed in github.io page
 
 ## Front-android
 UI for android application
