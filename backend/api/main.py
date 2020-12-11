@@ -115,55 +115,10 @@ def post_route():
       printINFO("added new user with id = %d"%(uid))
       return {"Status":"OK"}
     else:
-      # update data for an existing user
-      printWARN("update with email = %s"%(data["email"]))
-      status=mongo.db.status.find_one()
-      # add seed info here
-      seedList=[]
-      sid=status["sMID"]+1
-      for item in data["seeds"]:
-        seed={
-                "id": sid,
-                "seedingOutdoor":item["seedingOutdoor"],
-                "seedingIndoor":item["seedingIndoor"],
-                "variety": item["variety"],
-                "harvest": item["harvest"],
-                "exposition": item["exposition"],
-                "timeToHarvest": item["timeToHarvest"]
-            }
-        mongo.db.seeds.insert_one(seed)
-        seedList.append(sid)
-        sid=sid+1
-        
-      # update user
-      
-      user={
-            "name": data["name"],
-            "id": uid,
-            "email":data["email"],
-            "status":"unverified",
-            "info": data["info"],
-            "seeds":seedList,
-            "token": token_hex(4),
-            "counter-token": token_hex(12),
-            "timeStamp": time()
-            }
-      mongo.db.users.insert_one(user)
-      mongo.db.users.update_one({},{"$set":
+      # reject for the moment due to lack of auth
+      printWARN("registried user failed to update with email = %s"%(data["email"]))
+      return {"Status":"email already used"}
 
-      #update status
-      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
-      printINFO("update user with id = %d"%(uid))
-      return {"Status":"OK"}
-        
-      
-      
-      
-  #except:
-    #printERROR("bad request")
-    #return {"Status":"KO"}
-    
-    
 
 if __name__=="__main__":
   
