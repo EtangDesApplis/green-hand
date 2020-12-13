@@ -118,6 +118,199 @@ def post_route():
       # reject for the moment due to lack of auth
       printWARN("registried user failed to update with email = %s"%(data["email"]))
       return {"Status":"email already used"}
+    
+    
+@app.route('/login', methods=['POST'])
+def post_route():
+  
+  #try:
+    data = request.get_json()
+    # check if user is registered
+    if mongo.db.users.find_one({"email":data["email"]})==None:
+      # unknown user
+      # get max id
+      status=mongo.db.status.find_one()
+      if status==None:
+        # first run ever
+        uid=0
+        sid=0
+        uNb=0
+        sNb=0
+        #create status
+        mongo.db.status.insert_one({"uMID":-1,"uNb":0,"sMID":-1,"sNb":0})
+      else:
+        uid=status["uMID"]+1
+        sid=status["sMID"]+1
+        uNb=status["uNb"]
+        sNb=status["sNb"]
+
+      # add seed info here
+      seedList=[]
+      for item in data["seeds"]:
+        seed={
+                "id": sid,
+                "seedingOutdoor":item["seedingOutdoor"],
+                "seedingIndoor":item["seedingIndoor"],
+                "variety": item["variety"],
+                "harvest": item["harvest"],
+                "exposition": item["exposition"],
+                "timeToHarvest": item["timeToHarvest"]
+            }
+        mongo.db.seeds.insert_one(seed)
+        seedList.append(sid)
+        sid=sid+1
+
+      # add user
+      user={
+            "name": data["name"],
+            "id": uid,
+            "email":data["email"],
+            "status":"unverified",
+            "info": data["info"],
+            "seeds":seedList,
+            "token": token_hex(4),
+            "counter-token": token_hex(12),
+            "timeStamp": time()
+            }
+      mongo.db.users.insert_one(user)
+
+      #update status
+      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
+      printINFO("added new user with id = %d"%(uid))
+      return {"Status":"OK"}
+    else:
+      # reject for the moment due to lack of auth
+      printWARN("registried user failed to update with email = %s"%(data["email"]))
+      return {"Status":"email already used"}
+    
+    
+@app.route('/add', methods=['POST'])
+def post_route():
+  
+  #try:
+    data = request.get_json()
+    # check if user is registered
+    if mongo.db.users.find_one({"email":data["email"]})==None:
+      # unknown user
+      # get max id
+      status=mongo.db.status.find_one()
+      if status==None:
+        # first run ever
+        uid=0
+        sid=0
+        uNb=0
+        sNb=0
+        #create status
+        mongo.db.status.insert_one({"uMID":-1,"uNb":0,"sMID":-1,"sNb":0})
+      else:
+        uid=status["uMID"]+1
+        sid=status["sMID"]+1
+        uNb=status["uNb"]
+        sNb=status["sNb"]
+
+      # add seed info here
+      seedList=[]
+      for item in data["seeds"]:
+        seed={
+                "id": sid,
+                "seedingOutdoor":item["seedingOutdoor"],
+                "seedingIndoor":item["seedingIndoor"],
+                "variety": item["variety"],
+                "harvest": item["harvest"],
+                "exposition": item["exposition"],
+                "timeToHarvest": item["timeToHarvest"]
+            }
+        mongo.db.seeds.insert_one(seed)
+        seedList.append(sid)
+        sid=sid+1
+
+      # add user
+      user={
+            "name": data["name"],
+            "id": uid,
+            "email":data["email"],
+            "status":"unverified",
+            "info": data["info"],
+            "seeds":seedList,
+            "token": token_hex(4),
+            "counter-token": token_hex(12),
+            "timeStamp": time()
+            }
+      mongo.db.users.insert_one(user)
+
+      #update status
+      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
+      printINFO("added new user with id = %d"%(uid))
+      return {"Status":"OK"}
+    else:
+      # reject for the moment due to lack of auth
+      printWARN("registried user failed to update with email = %s"%(data["email"]))
+      return {"Status":"email already used"}
+    
+@app.route('/delete', methods=['POST'])
+def post_route():
+  
+  #try:
+    data = request.get_json()
+    # check if user is registered
+    if mongo.db.users.find_one({"email":data["email"]})==None:
+      # unknown user
+      # get max id
+      status=mongo.db.status.find_one()
+      if status==None:
+        # first run ever
+        uid=0
+        sid=0
+        uNb=0
+        sNb=0
+        #create status
+        mongo.db.status.insert_one({"uMID":-1,"uNb":0,"sMID":-1,"sNb":0})
+      else:
+        uid=status["uMID"]+1
+        sid=status["sMID"]+1
+        uNb=status["uNb"]
+        sNb=status["sNb"]
+
+      # add seed info here
+      seedList=[]
+      for item in data["seeds"]:
+        seed={
+                "id": sid,
+                "seedingOutdoor":item["seedingOutdoor"],
+                "seedingIndoor":item["seedingIndoor"],
+                "variety": item["variety"],
+                "harvest": item["harvest"],
+                "exposition": item["exposition"],
+                "timeToHarvest": item["timeToHarvest"]
+            }
+        mongo.db.seeds.insert_one(seed)
+        seedList.append(sid)
+        sid=sid+1
+
+      # add user
+      user={
+            "name": data["name"],
+            "id": uid,
+            "email":data["email"],
+            "status":"unverified",
+            "info": data["info"],
+            "seeds":seedList,
+            "token": token_hex(4),
+            "counter-token": token_hex(12),
+            "timeStamp": time()
+            }
+      mongo.db.users.insert_one(user)
+
+      #update status
+      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
+      printINFO("added new user with id = %d"%(uid))
+      return {"Status":"OK"}
+    else:
+      # reject for the moment due to lack of auth
+      printWARN("registried user failed to update with email = %s"%(data["email"]))
+      return {"Status":"email already used"}
+    
+
 
 
 if __name__=="__main__":
