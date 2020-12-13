@@ -121,7 +121,7 @@ def post_route():
     
     
 @app.route('/login', methods=['POST'])
-def post_route():
+def login_route():
   
   #try:
     data = request.get_json()
@@ -185,7 +185,7 @@ def post_route():
     
     
 @app.route('/add', methods=['POST'])
-def post_route():
+def add_route():
   
   #try:
     data = request.get_json()
@@ -248,7 +248,7 @@ def post_route():
       return {"Status":"email already used"}
     
 @app.route('/delete', methods=['POST'])
-def post_route():
+def delete_route():
   
   #try:
     data = request.get_json()
