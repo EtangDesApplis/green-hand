@@ -55,28 +55,34 @@ class Scheduler:
                 seed=self.seeds.find_one({"id": sid})
                 # outdoor activity
                 for month in seed["seedingOutdoor"]:
-                    timeStamp=int(datetime.now().strftime("%Y"))*100+int(month)
-                    event={
-                        "label":"%s-%s-%d-%d-ext"%(user["name"],seed["variety"],timeStamp,user["id"]),
-                        "email": user["email"],
-                        "status": "todo",
-                        "timeStamp": "%d"%(timeStamp)
-                    }
-                    #create an event if not yet
-                    if self.events.find_one({"label":event["label"]})==None:
-                        self.events.insert_one(event)
+                    try:
+                        timeStamp=int(datetime.now().strftime("%Y"))*100+int(month)
+                        event={
+                            "label":"%s-%s-%d-%d-ext"%(user["name"],seed["variety"],timeStamp,user["id"]),
+                            "email": user["email"],
+                            "status": "todo",
+                            "timeStamp": "%d"%(timeStamp)
+                        }
+                        #create an event if not yet
+                        if self.events.find_one({"label":event["label"]})==None:
+                            self.events.insert_one(event)
+                    except Exception as e:
+                        printERROR(e)
                 # indoor activity
                 for month in seed["seedingIndoor"]:
-                    timeStamp=int(datetime.now().strftime("%Y"))*100+int(month)
-                    event={
-                        "label":"%s-%s-%d-%d-int"%(user["name"],seed["variety"],timeStamp,user["id"]),
-                        "email": user["email"],
-                        "status": "todo",
-                        "timeStamp": "%d"%(timeStamp)
-                    }
-                    #create an event if not yet
-                    if self.events.find_one({"label":event["label"]})==None:
-                        self.events.insert_one(event)
+                    try:
+                        timeStamp=int(datetime.now().strftime("%Y"))*100+int(month)
+                        event={
+                            "label":"%s-%s-%d-%d-int"%(user["name"],seed["variety"],timeStamp,user["id"]),
+                            "email": user["email"],
+                            "status": "todo",
+                            "timeStamp": "%d"%(timeStamp)
+                        }
+                        #create an event if not yet
+                        if self.events.find_one({"label":event["label"]})==None:
+                            self.events.insert_one(event)
+                    except Exception as e:
+                        printERROR(e)
             #change user status to planified ?
             self.users.update_one(
                                 {"id": user["id"]},
