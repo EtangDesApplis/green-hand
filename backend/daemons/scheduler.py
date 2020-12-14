@@ -67,7 +67,7 @@ class Scheduler:
                         if self.events.find_one({"label":event["label"]})==None:
                             self.events.insert_one(event)
                     except Exception as e:
-                        printERROR(e)
+                        printERROR(str(e))
                 # indoor activity
                 for month in seed["seedingIndoor"]:
                     try:
@@ -82,7 +82,7 @@ class Scheduler:
                         if self.events.find_one({"label":event["label"]})==None:
                             self.events.insert_one(event)
                     except Exception as e:
-                        printERROR(e)
+                        printERROR(str(e))
             #change user status to planified ?
             self.users.update_one(
                                 {"id": user["id"]},
