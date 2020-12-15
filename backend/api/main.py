@@ -125,63 +125,14 @@ def login_route():
   
   #try:
     data = request.get_json()
-    # check if user is registered
-    if mongo.db.users.find_one({"email":data["email"]})==None:
+    userInfo=mongo.db.users.find_one({"token":data["token"]})
+    if userInfo==None:
       # unknown user
-      # get max id
-      status=mongo.db.status.find_one()
-      if status==None:
-        # first run ever
-        uid=0
-        sid=0
-        uNb=0
-        sNb=0
-        #create status
-        mongo.db.status.insert_one({"uMID":-1,"uNb":0,"sMID":-1,"sNb":0})
-      else:
-        uid=status["uMID"]+1
-        sid=status["sMID"]+1
-        uNb=status["uNb"]
-        sNb=status["sNb"]
-
-      # add seed info here
-      seedList=[]
-      for item in data["seeds"]:
-        seed={
-                "id": sid,
-                "seedingOutdoor":item["seedingOutdoor"],
-                "seedingIndoor":item["seedingIndoor"],
-                "variety": item["variety"],
-                "harvest": item["harvest"],
-                "exposition": item["exposition"],
-                "timeToHarvest": item["timeToHarvest"]
-            }
-        mongo.db.seeds.insert_one(seed)
-        seedList.append(sid)
-        sid=sid+1
-
-      # add user
-      user={
-            "name": data["name"],
-            "id": uid,
-            "email":data["email"],
-            "status":"unverified",
-            "info": data["info"],
-            "seeds":seedList,
-            "token": token_hex(4),
-            "counter-token": token_hex(12),
-            "timeStamp": time()
-            }
-      mongo.db.users.insert_one(user)
-
-      #update status
-      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
-      printINFO("added new user with id = %d"%(uid))
-      return {"Status":"OK"}
+      printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
+      return {"Status":"unknown user"}
     else:
-      # reject for the moment due to lack of auth
-      printWARN("registried user failed to update with email = %s"%(data["email"]))
-      return {"Status":"email already used"}
+      return userInfo
+
     
     
 @app.route('/add', methods=['POST'])
@@ -190,128 +141,64 @@ def add_route():
   #try:
     data = request.get_json()
     # check if user is registered
-    if mongo.db.users.find_one({"email":data["email"]})==None:
+    userInfo=mongo.db.users.find_one({"token":data["token"]})
+    if userInfo==None:
       # unknown user
-      # get max id
-      status=mongo.db.status.find_one()
-      if status==None:
-        # first run ever
-        uid=0
-        sid=0
-        uNb=0
-        sNb=0
-        #create status
-        mongo.db.status.insert_one({"uMID":-1,"uNb":0,"sMID":-1,"sNb":0})
-      else:
-        uid=status["uMID"]+1
-        sid=status["sMID"]+1
-        uNb=status["uNb"]
-        sNb=status["sNb"]
-
+      printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
+      return {"Status":"unknown user"}
+    else:
       # add seed info here
-      seedList=[]
+      status=mongo.db.status.find_one()
+      sid=status["sMID"]+1
+      seedList=userinfo["seeds"]
       for item in data["seeds"]:
-        seed={
-                "id": sid,
-                "seedingOutdoor":item["seedingOutdoor"],
-                "seedingIndoor":item["seedingIndoor"],
-                "variety": item["variety"],
-                "harvest": item["harvest"],
-                "exposition": item["exposition"],
-                "timeToHarvest": item["timeToHarvest"]
-            }
-        mongo.db.seeds.insert_one(seed)
-        seedList.append(sid)
-        sid=sid+1
-
-      # add user
-      user={
-            "name": data["name"],
-            "id": uid,
-            "email":data["email"],
-            "status":"unverified",
-            "info": data["info"],
-            "seeds":seedList,
-            "token": token_hex(4),
-            "counter-token": token_hex(12),
-            "timeStamp": time()
-            }
-      mongo.db.users.insert_one(user)
+        #check if seed doesnt exists in the database already
+        if mongo.db.seeds.find(item["variety"])==None:
+          seed={
+                  "id": sid,
+                  "seedingOutdoor":item["seedingOutdoor"],
+                  "seedingIndoor":item["seedingIndoor"],
+                  "variety": item["variety"],
+                  "harvest": item["harvest"],
+                  "exposition": item["exposition"],
+                  "timeToHarvest": item["timeToHarvest"]
+              }
+          mongo.db.seeds.insert_one(seed)
+          seedList.append(seed)
+          sid=sid+1
 
       #update status
-      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
-      printINFO("added new user with id = %d"%(uid))
+      mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList})
+      printINFO("updated user with id = %d"%(uid))
       return {"Status":"OK"}
-    else:
-      # reject for the moment due to lack of auth
-      printWARN("registried user failed to update with email = %s"%(data["email"]))
-      return {"Status":"email already used"}
+
+
     
 @app.route('/delete', methods=['POST'])
 def delete_route():
   
   #try:
     data = request.get_json()
-    # check if user is registered
-    if mongo.db.users.find_one({"email":data["email"]})==None:
+    userInfo=mongo.db.users.find_one({"token":data["token"]})
+    if userInfo==None:
       # unknown user
-      # get max id
-      status=mongo.db.status.find_one()
-      if status==None:
-        # first run ever
-        uid=0
-        sid=0
-        uNb=0
-        sNb=0
-        #create status
-        mongo.db.status.insert_one({"uMID":-1,"uNb":0,"sMID":-1,"sNb":0})
-      else:
-        uid=status["uMID"]+1
-        sid=status["sMID"]+1
-        uNb=status["uNb"]
-        sNb=status["sNb"]
+      printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
+      return {"Status":"unknown user"}
+    else:
+      
 
-      # add seed info here
-      seedList=[]
+      # update seed info here
+      seedList=userinfo["seeds"]
+      #TO DO
       for item in data["seeds"]:
-        seed={
-                "id": sid,
-                "seedingOutdoor":item["seedingOutdoor"],
-                "seedingIndoor":item["seedingIndoor"],
-                "variety": item["variety"],
-                "harvest": item["harvest"],
-                "exposition": item["exposition"],
-                "timeToHarvest": item["timeToHarvest"]
-            }
-        mongo.db.seeds.insert_one(seed)
-        seedList.append(sid)
-        sid=sid+1
-
-      # add user
-      user={
-            "name": data["name"],
-            "id": uid,
-            "email":data["email"],
-            "status":"unverified",
-            "info": data["info"],
-            "seeds":seedList,
-            "token": token_hex(4),
-            "counter-token": token_hex(12),
-            "timeStamp": time()
-            }
-      mongo.db.users.insert_one(user)
+        seedList.remove(item)
 
       #update status
-      mongo.db.status.update_one({},{"$set":{"uMID":uid,"uNb":uNb+1,"sMID":sid,"sNb":sNb+len(seedList)}})
-      printINFO("added new user with id = %d"%(uid))
+      mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList})
+      printINFO("updated user with id = %d"%(uid))
       return {"Status":"OK"}
-    else:
-      # reject for the moment due to lack of auth
-      printWARN("registried user failed to update with email = %s"%(data["email"]))
-      return {"Status":"email already used"}
+
     
-
-
 
 if __name__=="__main__":
   
