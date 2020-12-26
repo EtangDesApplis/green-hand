@@ -194,7 +194,7 @@ def delete_route():
         seedList.remove(item)
 
       #update status
-      mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList})
+      mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(uid))
       return {"Status":"OK"}
 
