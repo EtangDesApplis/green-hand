@@ -131,7 +131,7 @@ def login_route():
       printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
       return {"Status":"unknown user"}
     else:
-      return userInfo
+      return {userInfo}
 
     
     
@@ -150,7 +150,7 @@ def add_route():
       # add seed info here
       status=mongo.db.status.find_one()
       sid=status["sMID"]+1
-      seedList=userinfo["seeds"]
+      seedList=userInfo["seeds"]
       for item in data["seeds"]:
         #check if seed doesnt exists in the database already
         if mongo.db.seeds.find(item["variety"])==None:
