@@ -155,8 +155,9 @@ def add_route():
       for item in data["seeds"]:
         #check if seed doesnt exists in the database already
         print(item["variety"])
-        print(mongo.db.seeds.find({"variety":item["variety"]}))
-        if mongo.db.seeds.find({"variety":item["variety"]})==None:
+        #ca va pas!
+        print(mongo.db.seeds.find_one({"variety":item["variety"]}))
+        if mongo.db.seeds.find_one({"variety":item["variety"]})==None:
           seed={
                   "id": sid,
                   "seedingOutdoor":item["seedingOutdoor"],
