@@ -157,6 +157,7 @@ def add_route():
         print(item["variety"])
         #ca va pas!
         print(mongo.db.seeds.find_one({"variety":item["variety"]}))
+        print(data["seeds"])
         if mongo.db.seeds.find_one({"variety":item["variety"]})==None:
           seed={
                   "id": sid,
