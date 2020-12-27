@@ -131,8 +131,8 @@ def login_route():
       printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
       return {"Status":"unknown user"}
     else:
-      print (userInfo)
-      return {"Status":"unknown user info coming"}
+      print (type(userInfo))
+      return str(userInfo)
 
     
     
@@ -172,7 +172,7 @@ def add_route():
 
       #update status
       mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList}})
-      printINFO("updated user with id = %d"%(uid))
+      printINFO("updated user with id = %d"%(userInfo["uid"]))
       return {"Status":"OK"}
 
 
