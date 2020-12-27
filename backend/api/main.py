@@ -172,7 +172,7 @@ def add_route():
 
       #update status
       mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList}})
-      printINFO("updated user with id = %d"%(userInfo["uid"]))
+      printINFO("updated user with id = %d"%(userInfo["id"]))
       return {"Status":"OK"}
 
 
