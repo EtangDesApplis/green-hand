@@ -138,9 +138,7 @@ def login_route():
     
     
 @app.route('/add', methods=['POST'])
-def add_route():
-  
-  #try:
+def add_route(): 
     data = request.get_json()
     # check if user is registered
     userInfo=mongo.db.users.find_one({"token":data["token"]})
@@ -151,10 +149,8 @@ def add_route():
     else:
       # add seed info here
       status=mongo.db.status.find_one()
-      print("sMID :", status["sMID"])
       sid=status["sMID"]
       seedList=userInfo["seeds"]
-      print("init seedList :", seedList)
       for item in data["seeds"]:
         #check if seed doesnt exists in the database already
         if mongo.db.seeds.find_one({"variety":item["variety"]})==None:
@@ -170,35 +166,26 @@ def add_route():
           mongo.db.seeds.insert_one(seed)
           seedList.append(sid)
           sid=sid+1
-
-      #update status (pas l'air ok)
-      print("final seedList:", seedList)
-      print("userInfo:", userInfo)
+      #update status 
       mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(userInfo["id"]))
       return {"Status":"OK"}
-
-
     
 @app.route('/delete', methods=['POST'])
 def delete_route():
-  
-  #try:
     data = request.get_json()
     userInfo=mongo.db.users.find_one({"token":data["token"]})
+    print(userInfo)
     if userInfo==None:
       # unknown user
       printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
       return {"Status":"unknown user"}
     else:
-      
-
       # update seed info here
       seedList=userinfo["seeds"]
       #TO DO
       for item in data["seeds"]:
         seedList.remove(item)
-
       #update status
       print(seedList)
       mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
