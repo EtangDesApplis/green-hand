@@ -108,7 +108,9 @@ def post_route():
             "counter-token": token_hex(12),
             "timeStamp": time()
             }
-      print(user)
+      print("user:",user)
+      print("seedList:",seedList)
+
       mongo.db.users.insert_one(user)
 
       #update status
@@ -170,8 +172,8 @@ def add_route():
           sid=sid+1
 
       #update status (pas l'air ok)
-      print(seedList)
-      print(userInfo)
+      print("seedList:", seedList)
+      print("userInfo:", userInfo)
       mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(userInfo["id"]))
       return {"Status":"OK"}
