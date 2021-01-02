@@ -152,7 +152,7 @@ def add_route():
       # add seed info here
       status=mongo.db.status.find_one()
       print("sMID :", status["sMID"])
-      sid=status["sMID"]+1
+      sid=status["sMID"]
       seedList=userInfo["seeds"]
       print("init seedList :", seedList)
       for item in data["seeds"]:
@@ -200,7 +200,8 @@ def delete_route():
         seedList.remove(item)
 
       #update status
-      mongo.db.users.update_one(userInfo,{"$set":{"seeds":seedList}})
+      print(seedList)
+      mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(uid))
       return {"Status":"OK"}
 
