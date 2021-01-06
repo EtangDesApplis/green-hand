@@ -186,6 +186,7 @@ def delete_route():
       #TO DO
       for item in data["seeds"]:
         print("item: ",item)
+        print("item[variety] :",item["variety"])
         seedVariety=mongo.db.seeds({"variety":item["variety"]})
         print("seedVariety : ", seedVariety)
         seedList.remove(item)
