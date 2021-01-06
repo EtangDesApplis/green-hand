@@ -182,7 +182,7 @@ def delete_route():
       return {"Status":"unknown user"}
     else:
       # update seed info here
-      seedList=userinfo["seeds"]
+      seedList=userInfo["seeds"]
       print(seedList)
       print(data["seeds"])
       #TO DO
