@@ -183,12 +183,10 @@ def delete_route():
     else:
       # update seed info here
       seedList=userInfo["seeds"]
-      #TO DO
       for item in data["seeds"]:
-        print("item[variety] :",item["variety"])
         seedVariety=mongo.db.seeds.find_one({"variety":item["variety"]})
-        print("seedVariety : ", seedVariety)
-        seedList.remove(item)
+        print("seedVariety id: ", seedVariety["id"])
+        seedList.remove(seedVariety["id"])
       #update status
       print(seedList)
       mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
