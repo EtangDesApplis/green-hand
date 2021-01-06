@@ -175,20 +175,20 @@ def add_route():
 def delete_route():
     data = request.get_json()
     userInfo=mongo.db.users.find_one({"token":data["token"]})
+    
     print(userInfo)
     if userInfo==None:
       # unknown user
       printWARN("registried user failed to authenticate with token = %s"%(data["token"]))
       return {"Status":"unknown user"}
     else:
+      uid=userInfo["id"]
       # update seed info here
       seedList=userInfo["seeds"]
       for item in data["seeds"]:
         seedVariety=mongo.db.seeds.find_one({"variety":item["variety"]})
-        print("seedVariety id: ", seedVariety["id"])
         seedList.remove(seedVariety["id"])
       #update status
-      print(seedList)
       mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(uid))
       return {"Status":"OK"}
