@@ -183,6 +183,8 @@ def delete_route():
     else:
       # update seed info here
       seedList=userinfo["seeds"]
+      print(seedList)
+      print(data["seeds"])
       #TO DO
       for item in data["seeds"]:
         seedList.remove(item)
