@@ -166,6 +166,12 @@ def add_route():
           mongo.db.seeds.insert_one(seed)
           seedList.append(sid)
           sid=sid+1
+          else:
+            seedVariety=mongo.db.seeds.find_one({"variety":item["variety"]})
+            sid=seedVariety["id"]
+            if sid not in seedList:
+              seedList.append(sid)
+
       #update status 
       mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(userInfo["id"]))
