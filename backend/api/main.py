@@ -150,6 +150,7 @@ def add_route():
       # add seed info here
       status=mongo.db.status.find_one()
       sid=status["sMID"]
+      sNb=status["sNb"]
       seedList=userInfo["seeds"]
       for item in data["seeds"]:
         #check if seed doesnt exists in the database already
@@ -173,6 +174,7 @@ def add_route():
             seedList.append(sid)
 
       #update status 
+      mongo.db.status.update_one({},{"$set":{"sMID":sid,"sNb":sNb+len(seedList)}})
       mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
       printINFO("updated user with id = %d"%(userInfo["id"]))
       return {"Status":"OK"}
