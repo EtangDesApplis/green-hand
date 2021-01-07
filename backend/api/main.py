@@ -191,13 +191,18 @@ def delete_route():
       seedList=userInfo["seeds"]
       for item in data["seeds"]:
         seedVariety=mongo.db.seeds.find_one({"variety":item["variety"]})
-        if seedVariety not in seedList :
-          printWARN("The seed you want to delete is not in the user seed list : %s"%(item["variety"]))
+        if seedVariety==None:
+          printWARN("The seed you want to delete is not our database : %s"%(item["variety"]))
+          return {"Status":"unknown seed"}
         else:
-          seedList.remove(seedVariety["id"])
-          mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
-          printINFO("updated user with id = %d"%(uid))
-          return {"Status":"OK"}
+          if seedVariety["id"] not in seedList:
+            printWARN("The seed you want to delete is not in the user seed list : %s"%(item["variety"]))
+            return {"Status":"seed not in the user list"}
+          else:
+            seedList.remove(seedVariety["id"])
+            mongo.db.users.update_one({"token":data["token"]},{"$set":{"seeds":seedList}})
+            printINFO("updated user with id = %d"%(uid))
+            return {"Status":"OK"}
 
     
 
